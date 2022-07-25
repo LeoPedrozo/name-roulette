@@ -1,4 +1,3 @@
-import cowsay
 import itertools
 import threading
 import time
@@ -13,7 +12,8 @@ def loading_animation():
         for c in itertools.cycle(['|', '/', '-', '\\']):
             if done:
                 break
-            sys.stdout.write('\rchoosing someone... ' + c)
+
+            sys.stdout.write('\rBuscando al ganador... ' + c)
             sys.stdout.flush()
             time.sleep(0.1)
     t = threading.Thread(target=animate)
@@ -25,17 +25,17 @@ def clear_terminal():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def ask_choose_again():
-    again = input("\nChoose again? [Y/N]: ")
+    again = input("\nVolver a elegir? [Y/N]: ")
     if (again == 'y' or again == 'Y'):
         return
     elif again == 'n' or again == 'N':
-        print("\nProgram ended.")
+        print("\nPrograma finalizado.")
         sys.exit(0)
     else:
-        print("\nInvalid input: type Y for yes or N for no.")
+        print("\nEntrada invalida: tipea Y para yes o N para no.")
         ask_choose_again()
 
-def draw_name(df, amount, repeat, display, acowsay):
+def draw_name(df, amount, repeat, display):
     while not df.empty:
         clear_terminal()
         loading_animation()
@@ -44,24 +44,25 @@ def draw_name(df, amount, repeat, display, acowsay):
         for i in range(0, amount):
             if df.empty:
                 break
-            chosen_name.append(df.loc[df.sample().index[0], 'Names'])
+            chosen_name.append(df.loc[df.sample().index[0], 'Participantes'])
             if not repeat:
-                df = df[df["Names"].str.contains(chosen_name[i])==False]
+                df = df[df["Participantes"].str.contains(chosen_name[i])==False]
         if display and not df.empty:
             print(df)
-        if acowsay:
-            cowsay.tux(', '.join(chosen_name))
         else:
-            print(f"\nChosen Name/s: {', '.join(chosen_name)}")
+            print('---------------------------- ')
+            print('|    SORTEO DE              |')
+            print('---------------------------- ')
+            print(f"\nGanadores: {', '.join(chosen_name)}")
         ask_choose_again()
     else:
-        print("\nProgram Ended.\nList of names is now empty.")
+        print("\nEl programa ha finalizado.\nLa lista de nombres esta vacia.")
         sys.exit(0)
 
 def get_names(filename):
     try:
-        names_df = pd.read_csv(filename, sep=",", header=None, names=["Names"])
-        names_df['Names'] = names_df['Names'].astype('string')
+        names_df = pd.read_csv(filename, sep=",", header=None, names=["Participantes"])
+        names_df['Participantes'] = names_df['Participantes'].astype('string')
         return names_df
     except FileNotFoundError:
         print(f"\nFile '{filename}' does not exist.")
@@ -85,29 +86,23 @@ if __name__=="__main__":
         nargs='?',
         default=1,
         type=int,
-        help='The number of people to be chosen randomly.'
+        help='numero de personas a ser elegidas ganadoras en el sorteo.'
     )
 
     parser.add_argument(
         '--repeat',
         action="store_true",
         required=False,
-        help='Loop through the names of the players forever. Not including the --repeat flag will remove the player from the list once they are chosen.'
+        help='Permite que el nombre siga utilizandose para el sorteo. No incluir --repeat removera al usuario de la lista una vez que salga ganador.'
     )
 
     parser.add_argument(
         '--display',
         action="store_true",
         required=False,
-        help='Show the list of names.'
-    )
-
-    parser.add_argument(
-        '--cowsay',
-        action="store_true",
-        required=False,
-        help='Show chosen name/s with cowsay illustration.'
+        help='Mostrar la lista de nombres.'
     )
 
     args = parser.parse_args()
-    draw_name(get_names(args.file), args.amount, args.repeat, args.display, args.cowsay)
+    draw_name(get_names(args.file), args.amount, args.repeat, args.display)
+
