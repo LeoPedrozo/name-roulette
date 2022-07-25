@@ -26,8 +26,8 @@ A simple command line program that randomly selects a name from a list.
 
     | Optional Arguments        | Desciption     |
     |--------------|----------------|
-    | `--repeat`   | With flag: select a random name (without removing it from the list) forever. <br> Without flag (default): select a random name (and remove it from the list) until the list is empty. |
-    | `--display`  | Show the list of names. |
+    | `--repeat`   | Con el flag: Seleccionar un nombre aleatorio (Sin remover de la lista) para siempre. <br> Sin el flag (default): Selecciona un nombre aleatorio (y lo remueve de la lista) hasta que la lista quede vacia. |
+    | `--display`  | mostrar los nombres de la lista. |
 
 
 ## Getting Started
